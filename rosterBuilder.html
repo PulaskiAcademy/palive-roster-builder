@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Formatted football roster</title>
+  
+  
+  
+  
+<style>
+@media print {
+	#ddlSchool {
+		display: none;
+	}
+}
+
+body {
+	font-family: Arial;
+}
+
+thead {
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+td:nth-of-type(2),
+td:nth-of-type(3),
+td:nth-of-type(4),
+td:nth-of-type(5),
+td:nth-of-type(6) {
+	padding-left: 5px;
+}
+
+tbody > tr:nth-of-type(odd) {
+	background-color: #dddddd;
+}
+
+#divHeader {
+	font-weight: bold;
+	font-size: 2em;
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+#divLeft {
+	float: left;
+}
+
+#divRight {
+	float: right;
+}
+
+.wait {
+	cursor: wait;
+}
+</style>
+
+  
+  
+  
+  
+
+</head>
+
+<body translate="no" >
+  <select id="ddlSchool" onchange="ddlSchool_onchange()">
+	<option value="alma-airedales-(alma,ar)">Alma</option>
+	<option value="arkansas-razorbacks-(texarkana,ar)">Arkansas</option>
+	<option value="batesville-pioneers-(batesville,ar)">Batesville</option>
+	<option value="beebe-badgers-(beebe,ar)">Beebe</option>
+	<option value="blytheville-chickasaws-(blytheville,ar)">Blytheville</option>
+	<option value="camden-fairview-cardinals-(camden,ar)">Camden Fairview</option>
+	<option value="clarksville-panthers-(clarksville,ar)">Clarksville</option>
+	<option value="de-queen-leopards-(de-queen,ar)">De Queen</option>
+	<option value="farmington-cardinals-(farmington,ar)">Farmington</option>
+	<option value="forrest-city-mustangs-(forrest-city,ar)">Forrest City</option>
+	<option value="greenbrier-panthers-(greenbrier,ar)">Greenbrier</option>
+	<option value="greene-county-tech-golden-eagles-(paragould,ar)">Greene County Tech</option>
+	<option value="harrison-goblins-(harrison,ar)">Harrison</option>
+	<option value="hope-bobcats-(hope,ar)">Hope</option>
+	<option value="hot-springs-trojans-(hot-springs,ar)">Hot Springs</option>
+	<option value="huntsville-eagles-(huntsville,ar)">Huntsville</option>
+	<option value="lakeside-rams-(hot-springs,ar)">Lakeside</option>
+	<option value="little-rock-christian-academy-warriors-(little-rock,ar)">Little Rock Christian Academy</option>
+	<option value="magnolia-panthers-(magnolia,ar)">Magnolia</option>
+	<option value="maumelle-hornets-(maumelle,ar)">Maumelle</option>
+	<option value="morrilton-devil-dogs-(morrilton,ar)">Morrilton</option>
+	<option value="nettleton-raiders-(jonesboro,ar)">Nettleton</option>
+	<option value="paragould-rams-(paragould,ar)">Paragould</option>
+	<option value="parkview-patriots-(little-rock,ar)">Parkview</option>
+	<option value="pulaski-academy-bruins-(little-rock,ar)">Pulaski Academy</option>
+	<option value="robinson-senators-(little-rock,ar)">Robinson</option>
+	<option value="valley-view-blazers-(jonesboro,ar)">Valley View</option>
+	<option value="vilonia-eagles-(vilonia,ar)">Vilonia</option>
+	<option value="watson-chapel-wildcats-(pine-bluff,ar)">Watson Chapel</option>
+	<option value="white-hall-bulldogs-(white-hall,ar)">White Hall</option>
+	<option value="wynne-yellowjackets-(wynne,ar)">Wynne</option>
+</select>
+<div id="divHeader"></div>
+<div id="divLeft">
+	<table>
+		<thead>
+			<tr>
+				<td>#</td>
+				<td>Name</td>
+				<td>Pos</td>
+				<td>Ht</td>
+				<td>Wt</td>
+				<td>Yr</td>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>
+<div id="divRight">
+	<table>
+		<thead>
+			<tr>
+				<td>#</td>
+				<td>Name</td>
+				<td>Pos</td>
+				<td>Ht</td>
+				<td>Wt</td>
+				<td>Yr</td>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>
+  
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+  
+      <script id="rendered-js" >
+var school = "pulaski-academy-bruins-(little-rock,ar)";
+
+function ddlSchool_onchange() {
+	$("*").addClass("wait");
+	$("#divLeft > table > tbody").html("");
+	$("#divRight > table > tbody").html("");
+	loadContent(
+		'<script id="__NEXT_DATA__" type="application/json">',
+		"<" + "/script>",
+		"https://www.maxpreps.com/high-schools/" +
+			$("#ddlSchool").val() +
+			"/football/roster.htm"
+	);
+}
+
+function loadContent(start, end, urlToScrape) {
+	// workaround for cross origin requests
+	$.ajaxPrefilter(function (options) {
+		if (options.crossDomain && jQuery.support.cors) {
+			const http = window.location.protocol === "http:" ? "http:" : "https:";
+			options.url = http + "//cors-anywhere.herokuapp.com/" + options.url;
+		}
+	});
+
+	// get request
+	$.ajax({
+		url: urlToScrape,
+		method: "GET"
+	}).done(function (data) {
+		var intStart = data.indexOf(start) + start.length;
+		var intEnd = data.indexOf(end, intStart);
+		var selectedData = data.substring(intStart, intEnd);
+		var obj = JSON.parse(selectedData);
+
+		$("#divHeader").text(
+			obj.props.pageProps.teamContext.data.schoolName +
+				" " +
+				obj.props.pageProps.teamContext.data.schoolMascot
+		);
+
+		for (var x = 0; x < obj.props.pageProps.roster.length; x++) {
+			if (obj.props.pageProps.roster[x].isDeleted) {
+				obj.props.pageProps.roster.splice(x, 1);
+			}
+		}
+
+		var intPageLength = Math.round(obj.props.pageProps.roster.length / 2) - 1;
+		var whereItGoes = "#divLeft";
+
+		for (var x = 0; x < obj.props.pageProps.roster.length; x++) {
+			if (x > intPageLength) {
+				whereItGoes = "#divRight";
+			}
+			var player = obj.props.pageProps.roster[x];
+
+			if (player.weight == 0) {
+				player.weight = " ";
+			}
+			if (player.weight == null) {
+				player.weight = " ";
+			}
+			if (player.jersey == null) {
+				player.jersey = " ";
+			}
+			if (player.position1 == null) {
+				player.position1 = " ";
+			}
+
+			$(whereItGoes + " > table > tbody:last-child").append(
+				"<tr><td>" +
+					player.jersey +
+					"</td><td>" +
+					player.formattedName +
+					" </td><td>" +
+					player.position1 +
+					" </td><td>" +
+					player.formattedHeight +
+					" </td><td>" +
+					player.weight +
+					" </td><td>" +
+					player.formattedClassYear +
+					" </td></tr>"
+			);
+		}
+		$("*").removeClass("wait");
+	});
+}
+
+ddlSchool_onchange();
+    </script>
+
+  
+
+</body>
+
+</html>
+ 
